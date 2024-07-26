@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Weather Application</string>
+    <string name="sb_hint">Search City</string>
+    <string name="tv_location">Tiruchirappalli</string>
+</resources>

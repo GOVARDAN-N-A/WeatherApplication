@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:background="@drawable/sunny_bg"
+        android:layout_height="wrap_content"
+        android:theme="@style/WeatherApplication"
+        android:padding="16dp">
+
+        <EditText
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:background="#34000000"
+            android:hint="@string/sb_hint"
+
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvLocation"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:text="@string/tv_location"
+        android:drawableLeft="@drawable/baseline_push_pin_24"
+        android:drawablePadding="10dp"
+
+        android:textColor="@color/white"
+
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/kurale"/>
+
+
+
+            <RelativeLayout
+                android:id="@+id/circleLayout"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_gravity="center"
+                android:background="@drawable/circle_background"
+                android:layout_marginTop="10dp"
+                android:padding="16dp">
+
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/climate_gif"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:backgroundTint="@color/transparent"
+                    android:src="@drawable/sunny_trans_gif"
+                    android:layout_centerHorizontal="true"
+
+                    />
+
+                <TextView
+                    android:id="@+id/temperatureText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/climate_gif"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:text="30° C"
+                    android:fontFamily="@font/lilita_one"
+                    android:textColor="@color/white"
+                    android:textSize="30sp"
+                    />
+
+                <TextView
+                    android:id="@+id/realFeelText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/temperatureText"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:text="Real Feel: 40%"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    />
+
+
+            </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/curved_border"
+            android:padding = "10dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+
+            android:orientation="horizontal">
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/high_gif"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:backgroundTint="@color/transparent"
+                android:src="@drawable/up_arrow"
+                android:layout_marginEnd="5dp"
+
+                />
+
+            <TextView
+                android:id="@+id/minTemperatureText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="20° C"
+                android:textColor="#FF0000"
+                android:layout_marginEnd="20dp"
+                android:textSize="20sp" />
+
+
+
+            <TextView
+                android:id="@+id/maxTemperatureText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="20° C"
+                android:textColor="#59FF00"
+                android:layout_marginEnd="5dp"
+                android:textSize="20sp" />
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/low_gif"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:backgroundTint="@color/transparent"
+                android:src="@drawable/down_arrow"
+
+                />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/curved_border"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:layout_marginRight="50dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:text="lat"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/kurale"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/white"
+                    android:id="@+id/lat_value"
+                    android:textSize="25sp"
+                    android:text="35.05"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:background="@drawable/curved_border"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="25sp"
+                    android:textColor="@color/white"
+
+                    android:textStyle="bold"
+                    android:fontFamily="@font/kurale"
+                    android:text="lon"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/kurale"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:id="@+id/lon_value"
+                    android:layout_marginTop="10dp"
+                    android:textSize="25sp"
+                    android:text="35.05"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:background="@drawable/curved_border"
+            android:padding="15dp">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="10dp"
+                android:paddingLeft="10dp">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:text="Humidity"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+
+                        android:fontFamily="@font/kurale"
+                        android:text="65%"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:textStyle="bold"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/kurale"
+                        android:textColor="@color/white"
+
+                        android:text="Chance to rain"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:gravity="end"
+                        android:textColor="@color/white"
+
+                        android:fontFamily="@font/kurale"
+                        android:text="40%"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+
+                        android:fontFamily="@font/kurale"
+                        android:text="Pressure"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/kurale"
+                        android:textColor="@color/white"
+
+                        android:gravity="end"
+                        android:text="1006mbar"/>
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+
+
+
+
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+android:layout_marginTop="20dp"
+        android:background="@drawable/curved_border"
+        android:paddingEnd="0dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginEnd="15dp"
+            android:padding="10dp"
+            >
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/sunrise_gif_tp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="06:10"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:gravity="center"
+            android:layout_marginTop="0dp"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/direction1"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kurale"
+                android:layout_marginTop="10dp"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:text="20.4 km/ph"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="15dp"
+            android:padding="10dp"
+            >
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/sunset_gif_ts" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="06:10"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:layout_marginTop="10px"
+                android:layout_gravity="center"
+                />
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+        </LinearLayout>
+</ScrollView>
