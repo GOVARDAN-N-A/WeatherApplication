@@ -1,117 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
     <LinearLayout
+        android:id="@+id/backgroundLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:background="@drawable/sunny_bg"
+        android:background="@drawable/default_bg"
         android:layout_height="wrap_content"
         android:theme="@style/WeatherApplication"
         android:padding="16dp">
 
-        <EditText
+        <SearchView
+            android:id="@+id/searchView"
             android:layout_width="320dp"
             android:layout_height="50dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
             android:background="#34000000"
-            android:hint="@string/sb_hint"
-
+            android:queryHint="@string/sb_hint"
             android:paddingStart="20dp"
             android:paddingEnd="10dp"
             android:textAlignment="center"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tvLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="@string/tv_location"
+            android:drawableLeft="@drawable/baseline_push_pin_24"
+            android:drawablePadding="10dp"
             android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/kurale"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvLocation"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="@string/tv_location"
-        android:drawableLeft="@drawable/baseline_push_pin_24"
-        android:drawablePadding="10dp"
+        <RelativeLayout
+            android:id="@+id/circleLayout"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:background="@drawable/circle_background"
+            android:layout_marginTop="10dp"
+            android:padding="16dp">
 
-        android:textColor="@color/white"
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/climateGif"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:backgroundTint="@color/transparent"
+                android:src="@drawable/sunny_trans_gif"
+                android:layout_centerHorizontal="true"/>
 
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/kurale"/>
+            <TextView
+                android:id="@+id/temperatureText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/climateGif"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:text="30° C"
+                android:fontFamily="@font/lilita_one"
+                android:textColor="@color/white"
+                android:textSize="30sp"/>
 
-
-
-            <RelativeLayout
-                android:id="@+id/circleLayout"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:background="@drawable/circle_background"
-                android:layout_marginTop="10dp"
-                android:padding="16dp">
-
-                <pl.droidsonroids.gif.GifImageView
-                    android:id="@+id/climate_gif"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:backgroundTint="@color/transparent"
-                    android:src="@drawable/sunny_trans_gif"
-                    android:layout_centerHorizontal="true"
-
-                    />
-
-                <TextView
-                    android:id="@+id/temperatureText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/climate_gif"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp"
-                    android:text="30° C"
-                    android:fontFamily="@font/lilita_one"
-                    android:textColor="@color/white"
-                    android:textSize="30sp"
-                    />
-
-                <TextView
-                    android:id="@+id/realFeelText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/temperatureText"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="5dp"
-                    android:text="Real Feel: 40%"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    />
-
-
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/realFeelText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/temperatureText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:text="Real Feel: 40%"
+                android:textColor="@color/white"
+                android:textSize="16sp"/>
+        </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/minMaxTempLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/curved_border"
-            android:padding = "10dp"
+            android:padding="10dp"
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-
             android:orientation="horizontal">
 
             <pl.droidsonroids.gif.GifImageView
-                android:id="@+id/high_gif"
+                android:id="@+id/highGif"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:backgroundTint="@color/transparent"
                 android:src="@drawable/up_arrow"
-                android:layout_marginEnd="5dp"
-
-                />
+                android:layout_marginEnd="5dp"/>
 
             <TextView
                 android:id="@+id/minTemperatureText"
@@ -121,9 +110,7 @@
                 android:text="20° C"
                 android:textColor="#FF0000"
                 android:layout_marginEnd="20dp"
-                android:textSize="20sp" />
-
-
+                android:textSize="20sp"/>
 
             <TextView
                 android:id="@+id/maxTemperatureText"
@@ -133,21 +120,18 @@
                 android:text="20° C"
                 android:textColor="#59FF00"
                 android:layout_marginEnd="5dp"
-                android:textSize="20sp" />
+                android:textSize="20sp"/>
 
             <pl.droidsonroids.gif.GifImageView
-                android:id="@+id/low_gif"
+                android:id="@+id/lowGif"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:backgroundTint="@color/transparent"
-                android:src="@drawable/down_arrow"
-
-                />
-
-
+                android:src="@drawable/down_arrow"/>
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/latLonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -156,6 +140,7 @@
             android:gravity="center">
 
             <LinearLayout
+                android:id="@+id/latLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/curved_border"
@@ -167,6 +152,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/latLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
@@ -176,54 +162,53 @@
                     android:text="lat"/>
 
                 <TextView
+                    android:id="@+id/latValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/kurale"
                     android:layout_marginTop="10dp"
                     android:textColor="@color/white"
-                    android:id="@+id/lat_value"
                     android:textSize="25sp"
-                    android:text="35.05"
-                    />
+                    android:text="35.05"/>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/lonLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="20dp"
                 android:paddingBottom="20dp"
-
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp"
                 android:background="@drawable/curved_border"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/lonLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:textSize="25sp"
                     android:textColor="@color/white"
-
                     android:textStyle="bold"
                     android:fontFamily="@font/kurale"
                     android:text="lon"/>
 
                 <TextView
+                    android:id="@+id/lonValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/kurale"
                     android:gravity="center"
                     android:textColor="@color/white"
-                    android:id="@+id/lon_value"
                     android:layout_marginTop="10dp"
                     android:textSize="25sp"
                     android:text="35.05"/>
             </LinearLayout>
         </LinearLayout>
 
-
         <LinearLayout
+            android:id="@+id/detailsLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -233,18 +218,21 @@
             android:padding="15dp">
 
             <TableLayout
+                android:id="@+id/detailsTable"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
                 android:paddingLeft="10dp">
 
                 <TableRow
+                    android:id="@+id/humidityRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:gravity="center_vertical">
 
                     <TextView
+                        android:id="@+id/humidityLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -254,163 +242,139 @@
                         android:text="Humidity"/>
 
                     <TextView
+                        android:id="@+id/humidityValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="end"
                         android:textSize="18sp"
                         android:textColor="@color/white"
-
                         android:fontFamily="@font/kurale"
                         android:text="65%"/>
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/pressureRow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:textStyle="bold"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textSize="18sp"
-                        android:fontFamily="@font/kurale"
-                        android:textColor="@color/white"
-
-                        android:text="Chance to rain"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:gravity="end"
-                        android:textColor="@color/white"
-
-                        android:fontFamily="@font/kurale"
-                        android:text="40%"/>
-                </TableRow>
-
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="center_vertical">
-
-                    <TextView
+                        android:id="@+id/pressureLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textStyle="bold"
                         android:textSize="18sp"
                         android:textColor="@color/white"
-
-                        android:fontFamily="@font/kurale"
                         android:text="Pressure"/>
 
                     <TextView
+                        android:id="@+id/pressureValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:fontFamily="@font/kurale"
-                        android:textColor="@color/white"
-
                         android:gravity="end"
-                        android:text="1006mbar"/>
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/kurale"
+                        android:text="1012 hPa"/>
                 </TableRow>
+
+
             </TableLayout>
         </LinearLayout>
 
-
-
-
-
-
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-android:layout_marginTop="20dp"
-        android:background="@drawable/curved_border"
-        android:paddingEnd="0dp"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:orientation="horizontal">
-
         <LinearLayout
+            android:id="@+id/sunriseSunsetLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginEnd="15dp"
-            android:padding="10dp"
-            >
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/sunrise_gif_tp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="06:10"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:layout_marginTop="10dp"
-                android:layout_gravity="center"
-                />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/curved_border"
+            android:paddingEnd="0dp"
             android:gravity="center"
-            android:layout_marginTop="0dp"
             android:layout_gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/direction1"
-                />
-
-            <TextView
+            <LinearLayout
+                android:id="@+id/sunriseLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/kurale"
-                android:layout_marginTop="10dp"
-                android:textSize="18sp"
-                android:textColor="@color/white"
-                android:text="20.4 km/ph"/>
-        </LinearLayout>
+                android:orientation="vertical"
+                android:layout_marginEnd="15dp"
+                android:padding="10dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="15dp"
-            android:padding="10dp"
-            >
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/sunset_gif_ts" />
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/sunriseGif"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/transparent"
+                    android:src="@drawable/sunrise_gif_tp"
+                    android:layout_marginEnd="5dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="06:10"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:layout_marginTop="10px"
+                <TextView
+                    android:id="@+id/sunriseTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="06:10"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/windSpeedLayout"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:gravity="center"
+                android:layout_marginTop="0dp"
                 android:layout_gravity="center"
-                />
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/windDirectionImage"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/direction1" />
+
+                <TextView
+                    android:id="@+id/windSpeedText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/kurale"
+                    android:layout_marginTop="10dp"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:text="20.4 km/ph" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/sunsetLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="15dp"
+                android:padding="10dp">
+
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/sunsetGif"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/transparent"
+                    android:src="@drawable/sunset_gif_ts"
+                    android:layout_marginEnd="5dp" />
+
+                <TextView
+                    android:id="@+id/sunsetTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="06:10"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center" />
+            </LinearLayout>
         </LinearLayout>
-
-
 
     </LinearLayout>
-        </LinearLayout>
 </ScrollView>
