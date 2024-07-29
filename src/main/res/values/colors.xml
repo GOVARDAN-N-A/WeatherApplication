@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="night_blue">#0F084B</color>
+    <color name="colombia_blue">#90e0ef</color>
+    <color name="pale_gray">#FBFEFB</color>
+    <color name="chilli_pepper">#c1121f</color>
+    <color name="mint_tulip">#CAF0F8</color>
+    <color name="bw">#3CC5FFF9</color>
+
+</resources>
