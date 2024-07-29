@@ -125,36 +125,36 @@ class WeatherActivity : AppCompatActivity() {
     private fun updateWeatherGif(weatherMain: String, weatherDescription: String) {
         when (weatherMain) {
             "Thunderstorm" -> {
-                binding.climateGif.setImageResource(R.drawable.thunderstorm_gif)
-                binding.root.setBackgroundResource(R.drawable.thunderstorm_bg)
+                binding.climateGif.setImageResource(R.drawable.storm_status)
+                binding.root.setBackgroundResource(R.drawable.rainy_bg)
             }
             "Drizzle" -> {
-                binding.climateGif.setImageResource(R.drawable.drizzle_gif)
+                binding.climateGif.setImageResource(R.drawable.drizzle_status)
                 binding.root.setBackgroundResource(R.drawable.drizzle_bg)
             }
             "Rain" -> {
-                binding.climateGif.setImageResource(R.drawable.rain_gif)
-                binding.root.setBackgroundResource(R.drawable.rain_bg)
+                binding.climateGif.setImageResource(R.drawable.rainy_status_2)
+                binding.root.setBackgroundResource(R.drawable.rainy_bg)
             }
             "Snow" -> {
-                binding.climateGif.setImageResource(R.drawable.snow_gif)
+                binding.climateGif.setImageResource(R.drawable.snow_status)
                 binding.root.setBackgroundResource(R.drawable.snow_bg)
             }
             "Clear" -> {
-                binding.climateGif.setImageResource(R.drawable.clear_sky_gif)
-                binding.root.setBackgroundResource(R.drawable.clear_sky_bg)
+                binding.climateGif.setImageResource(R.drawable.clear_status)
+                binding.root.setBackgroundResource(R.drawable.sunny_bg)
             }
             "Clouds" -> {
-                binding.climateGif.setImageResource(R.drawable.clouds_gif)
-                binding.root.setBackgroundResource(R.drawable.clouds_bg)
+                binding.climateGif.setImageResource(R.drawable.rainy_status_2)
+                binding.root.setBackgroundResource(R.drawable.rainy_bg)
             }
             "Atmosphere" -> {
-               binding.climateGif.setImageResource(R.drawable.fog_mist)
-                binding.root.setBackgroundResource(R.drawable.clouds_bg)
+               binding.climateGif.setImageResource(R.drawable.fog_mist_status)
+                binding.root.setBackgroundResource(R.drawable.rainy_bg)
 
             }
             else -> {
-                binding.climateGif.setImageResource(R.drawable.default_gif)
+                binding.climateGif.setImageResource(R.drawable.clear_status)
                 binding.root.setBackgroundResource(R.drawable.default_bg)
             }
         }
