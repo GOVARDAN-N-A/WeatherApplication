@@ -63,7 +63,7 @@ class WeatherActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<List<GeocodeResponse>>, t: Throwable) {
                 Log.e("WeatherActivity", "Failure: ${t.message}")
-                t.printStackTrace() // Add this line to print the full stack trace
+                t.printStackTrace() // Print the full stack trace
                 Toast.makeText(this@WeatherActivity, t.toString(), Toast.LENGTH_SHORT).show()
             }
         })
@@ -117,37 +117,44 @@ class WeatherActivity : AppCompatActivity() {
         binding.sunsetTime.text = formatTime(data.sys?.sunset)
 
         // Update GIFs or images based on weather conditions
-        data.weather?.get(0)?.let { it.main?.let { it1 -> updateWeatherGif(it1) } }
+        data.weather?.get(0)?.let {
+            it.description?.let { it1 -> it.main?.let { it2 -> updateWeatherGif(it2, it1) } }
+        }
     }
 
-    private fun updateWeatherGif(weatherCondition: String) {
-        when (weatherCondition) {
-            "Rain" -> {
-                binding.climateGif.setImageResource(R.drawable.rainy_trans_gif)
-                binding.root.setBackgroundResource(R.drawable.rainy_bg)
-            }
-            "Clear" -> {
-                binding.climateGif.setImageResource(R.drawable.sunny_trans_gif)
-                binding.root.setBackgroundResource(R.drawable.sunny_bg)
-            }
-            "Cloudy" -> {
-                binding.climateGif.setImageResource(R.drawable.rainy_gif)
-                binding.root.setBackgroundResource(R.drawable.cloudy_bg)
-            }
-            "Snow" -> {
-                binding.climateGif.setImageResource(R.drawable.snow_bg)
-                binding.root.setBackgroundResource(R.drawable.snow_bg)
-            }
-            "Windy" -> {
-                binding.climateGif.setImageResource(R.drawable.sunny_trans_gif)
-                binding.root.setBackgroundResource(R.drawable.rainy_bg)
+    private fun updateWeatherGif(weatherMain: String, weatherDescription: String) {
+        when (weatherMain) {
+            "Thunderstorm" -> {
+                binding.climateGif.setImageResource(R.drawable.thunderstorm_gif)
+                binding.root.setBackgroundResource(R.drawable.thunderstorm_bg)
             }
             "Drizzle" -> {
-                binding.climateGif.setImageResource(R.drawable.drizzle)
+                binding.climateGif.setImageResource(R.drawable.drizzle_gif)
                 binding.root.setBackgroundResource(R.drawable.drizzle_bg)
             }
+            "Rain" -> {
+                binding.climateGif.setImageResource(R.drawable.rain_gif)
+                binding.root.setBackgroundResource(R.drawable.rain_bg)
+            }
+            "Snow" -> {
+                binding.climateGif.setImageResource(R.drawable.snow_gif)
+                binding.root.setBackgroundResource(R.drawable.snow_bg)
+            }
+            "Clear" -> {
+                binding.climateGif.setImageResource(R.drawable.clear_sky_gif)
+                binding.root.setBackgroundResource(R.drawable.clear_sky_bg)
+            }
+            "Clouds" -> {
+                binding.climateGif.setImageResource(R.drawable.clouds_gif)
+                binding.root.setBackgroundResource(R.drawable.clouds_bg)
+            }
+            "Atmosphere" -> {
+               binding.climateGif.setImageResource(R.drawable.fog_mist)
+                binding.root.setBackgroundResource(R.drawable.clouds_bg)
+
+            }
             else -> {
-                binding.climateGif.setImageResource(R.drawable.sunny_trans_gif)
+                binding.climateGif.setImageResource(R.drawable.default_gif)
                 binding.root.setBackgroundResource(R.drawable.default_bg)
             }
         }
