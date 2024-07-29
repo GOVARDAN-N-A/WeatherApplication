@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bk1"
+    android:orientation="vertical"
+    android:padding="20dp"
+    tools:context=".LoginActivity">
+
+    <TextView
+        android:id="@+id/login_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+
+        android:textStyle="bold"
+        android:fontFamily="@font/kotta_one"
+        android:text="Welcome"
+        android:textColor="@color/black"
+        android:textSize="40sp" />
+
+    <!--    <TextView-->
+    <!--        android:id="@+id/login_slogan"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="10dp"-->
+
+    <!--        android:fontFamily="@font/kotta_one"-->
+
+    <!--        android:textSize="30sp" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="25dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/username_layout"
+            style="@style/ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Email"
+
+            app:boxStrokeColor="@color/night_blue"
+            app:errorTextColor="@color/chilli_pepper"
+            app:hintTextColor="@color/night_blue"
+            app:passwordToggleEnabled="false">
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/username_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                android:background="@drawable/roundc"
+                android:drawablePadding="20dp"
+                android:fontFamily="@font/kurale"
+                android:inputType="text"
+                app:boxStrokeColor="@color/night_blue"
+                app:errorTextColor="@color/chilli_pepper"
+                app:hintTextColor="@color/night_blue"
+
+                android:textSize="30sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_layout"
+            style="@style/ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+
+            app:boxStrokeColor="@color/night_blue"
+            app:errorTextColor="@color/chilli_pepper"
+            app:hintTextColor="@color/night_blue"
+            app:passwordToggleEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/kurale"
+                android:background="@drawable/roundc"
+                app:boxStrokeColor="@color/night_blue"
+                app:errorTextColor="@color/chilli_pepper"
+                app:hintTextColor="@color/night_blue"
+                android:drawablePadding="20dp"
+                android:inputType="textPassword"
+
+                android:textSize="30sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/forgot_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="28dp"
+            android:backgroundTint="@color/transparent"
+            android:elevation="0dp"
+            android:fontFamily="@font/kurale"
+            android:gravity="end"
+            android:text="forgot_password?"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="28dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/rounded_button"
+            android:backgroundTint="@color/bw"
+            android:fontFamily="@font/kurale"
+            android:text="Login"
+            android:textColor="@color/night_blue"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/signup_button"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/rounded_button"
+            android:elevation="0dp"
+            android:backgroundTint="@color/transparent"
+            android:fontFamily="@font/kurale"
+            android:text="New User/SignUp"
+            android:textColor="@color/black"
+            android:textSize="22sp" />
+    </LinearLayout>
+</LinearLayout>
+
