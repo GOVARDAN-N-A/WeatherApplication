@@ -2,10 +2,12 @@ package com.example.weatherapplication.Activity
 
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.widget.SearchView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.weatherapplication.Model.CurrentResponseApi
+import com.example.weatherapplication.Model.GeocodeResponse
 import com.example.weatherapplication.R
 import com.example.weatherapplication.ViewModel.WeatherViewModel
 import com.example.weatherapplication.databinding.ActivityWeatherBinding
@@ -17,24 +19,63 @@ class WeatherActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWeatherBinding
     private val weatherViewModel: WeatherViewModel by viewModels()
+    private val apiKey = "4b03a2bc72bbb54c777ad25fd395a272"
+    var city = "Trichy"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWeatherBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val lat = 30.5
-        val lon = 50.5
-        val city = "trichy"
-        binding.tvLocation.text = city
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) {
+                    city = query
+                    fetchCoordinates(city) // Call fetchCoordinates when the query is submitted
+                }
+                return true
+            }
 
-        weatherViewModel.loadingCurrentWeather(lat, lon, "metric").enqueue(object :
-            Callback<CurrentResponseApi> {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+
+        fetchCoordinates(city)
+    }
+
+    private fun fetchCoordinates(city: String) {
+        weatherViewModel.getCoordinates(city, 1, apiKey).enqueue(object : Callback<List<GeocodeResponse>> {
+            override fun onResponse(call: Call<List<GeocodeResponse>>, response: Response<List<GeocodeResponse>>) {
+                if (response.isSuccessful) {
+                    val geocodeResponse = response.body()?.firstOrNull()
+                    geocodeResponse?.let {
+                        val lat = it.lat ?: 0.0
+                        val lon = it.lon ?: 0.0
+                        fetchWeather(lat, lon)
+                    }
+                } else {
+                    val errorMessage = response.errorBody()?.string()
+                    Log.e("WeatherActivity", "Failed to fetch coordinates: ${response.code()} - $errorMessage")
+                    Toast.makeText(this@WeatherActivity, "Failed to get coordinates", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<GeocodeResponse>>, t: Throwable) {
+                Log.e("WeatherActivity", "Failure: ${t.message}")
+                t.printStackTrace() // Add this line to print the full stack trace
+                Toast.makeText(this@WeatherActivity, t.toString(), Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun fetchWeather(lat: Double, lon: Double) {
+        weatherViewModel.loadingCurrentWeather(lat, lon, "metric").enqueue(object : Callback<CurrentResponseApi> {
             override fun onResponse(call: Call<CurrentResponseApi>, response: Response<CurrentResponseApi>) {
                 if (response.isSuccessful) {
                     val data = response.body()
-                    Log.d("WeatherActivity", "API Response: $data")
                     data?.let {
+                        Log.d("WeatherActivity", "Updating UI with data: $data")
                         updateUI(it)
                     }
                 } else {
@@ -62,7 +103,7 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     private fun updateUI(data: CurrentResponseApi) {
-        Log.d("WeatherActivity", "Updating UI with data: $data")
+        binding.tvLocation.text = city
         binding.temperatureText.text = "${data.main?.temp}° C"
         binding.realFeelText.text = "Real Feel: ${data.main?.feelsLike}° C"
         binding.minTemperatureText.text = "${data.main?.tempMin}° C"
@@ -75,15 +116,11 @@ class WeatherActivity : AppCompatActivity() {
         binding.sunriseTime.text = formatTime(data.sys?.sunrise)
         binding.sunsetTime.text = formatTime(data.sys?.sunset)
 
-        // Log the weather condition
-        data.weather?.get(0)?.let {
-            Log.d("WeatherActivity", "Weather condition: ${it.main}")
-            updateWeatherGif(it.main ?: "")
-        }
+        // Update GIFs or images based on weather conditions
+        data.weather?.get(0)?.let { it.main?.let { it1 -> updateWeatherGif(it1) } }
     }
 
     private fun updateWeatherGif(weatherCondition: String) {
-        Log.d("WeatherActivity", "Updating weather GIF for condition: $weatherCondition")
         when (weatherCondition) {
             "Rain" -> {
                 binding.climateGif.setImageResource(R.drawable.rainy_trans_gif)
@@ -93,28 +130,24 @@ class WeatherActivity : AppCompatActivity() {
                 binding.climateGif.setImageResource(R.drawable.sunny_trans_gif)
                 binding.root.setBackgroundResource(R.drawable.sunny_bg)
             }
-            "Clouds" -> {
-                binding.climateGif.setImageResource(R.drawable.rainy_trans_gif)
+            "Cloudy" -> {
+                binding.climateGif.setImageResource(R.drawable.rainy_gif)
                 binding.root.setBackgroundResource(R.drawable.cloudy_bg)
             }
             "Snow" -> {
                 binding.climateGif.setImageResource(R.drawable.snow_bg)
                 binding.root.setBackgroundResource(R.drawable.snow_bg)
             }
-            "Wind" -> {
-                binding.climateGif.setImageResource(R.drawable.rainy_trans_gif)
-                binding.root.setBackgroundResource(R.drawable.snow_bg)
+            "Windy" -> {
+                binding.climateGif.setImageResource(R.drawable.sunny_trans_gif)
+                binding.root.setBackgroundResource(R.drawable.rainy_bg)
             }
             "Drizzle" -> {
                 binding.climateGif.setImageResource(R.drawable.drizzle)
                 binding.root.setBackgroundResource(R.drawable.drizzle_bg)
             }
-            "Thunderstorm" -> {
-                binding.climateGif.setImageResource(R.drawable.tunderstorm)
-                binding.root.setBackgroundResource(R.drawable.snow_bg)
-            }
             else -> {
-                binding.climateGif.setImageResource(R.drawable.drizzle)
+                binding.climateGif.setImageResource(R.drawable.sunny_trans_gif)
                 binding.root.setBackgroundResource(R.drawable.default_bg)
             }
         }

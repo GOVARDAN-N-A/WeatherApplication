@@ -50,6 +50,9 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.android.gif.drawable)
 
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
