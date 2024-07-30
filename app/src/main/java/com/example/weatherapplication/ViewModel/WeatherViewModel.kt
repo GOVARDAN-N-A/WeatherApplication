@@ -13,4 +13,8 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
 
     fun getCoordinates(cityName: String, limit: Int, apiKey: String) =
         repository.getCoordinates(cityName, limit, apiKey)
+
+    fun get5DayForecast(lat: Double, lon: Double, unit: String) =
+        repository.get5DayForecast(lat, lon, unit)
+
 }

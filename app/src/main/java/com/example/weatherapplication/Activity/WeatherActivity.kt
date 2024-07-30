@@ -2,15 +2,19 @@ package com.example.weatherapplication.Activity
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.weatherapplication.Model.CurrentResponseApi
+import com.example.weatherapplication.Model.ForecastResponseApi
 import com.example.weatherapplication.Model.GeocodeResponse
 import com.example.weatherapplication.R
 import com.example.weatherapplication.ViewModel.WeatherViewModel
 import com.example.weatherapplication.databinding.ActivityWeatherBinding
+import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -55,6 +59,7 @@ class WeatherActivity : AppCompatActivity() {
                         val lat = it.lat ?: 0.0
                         val lon = it.lon ?: 0.0
                         fetchWeather(lat, lon)
+                        fetch5DayForecast(lat, lon)
                     }
                 } else {
                     val errorMessage = response.errorBody()?.string()
@@ -70,6 +75,8 @@ class WeatherActivity : AppCompatActivity() {
             }
         })
     }
+
+
 
     private fun fetchWeather(lat: Double, lon: Double) {
         weatherViewModel.loadingCurrentWeather(lat, lon, "metric").enqueue(object : Callback<CurrentResponseApi> {
@@ -166,7 +173,7 @@ class WeatherActivity : AppCompatActivity() {
                 }
             }
             in 801..804 -> { // Clouds
-                binding.climateGif.setImageResource(R.drawable.cloudy_status)
+                binding.climateGif.setImageResource(R.drawable.cloud_image)
                 binding.backgroundImageView.setImageResource(R.drawable.cloudy_bg)
             }
             else -> {
@@ -175,5 +182,104 @@ class WeatherActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun fetch5DayForecast(lat: Double, lon: Double) {
+        weatherViewModel.get5DayForecast(lat, lon, "metric").enqueue(object : Callback<ForecastResponseApi> {
+            override fun onResponse(call: Call<ForecastResponseApi>, response: Response<ForecastResponseApi>) {
+                if (response.isSuccessful) {
+                    val forecastList = response.body()?.list ?: return
+                    updateForecastUI(forecastList)
+                } else {
+                    Toast.makeText(this@WeatherActivity, "Failed to get forecast data", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ForecastResponseApi>, t: Throwable) {
+                Toast.makeText(this@WeatherActivity, t.toString(), Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun updateForecastUI(forecastList: List<ForecastResponseApi.ForecastItem>) {
+        // Assuming you have only 5 forecasts and they're in the right order
+        val weatherImages = listOf(
+            R.id.day1_image,
+            R.id.day2_image,
+            R.id.day3_image,
+            R.id.day4_image,
+            R.id.day5_image
+        )
+
+        val contentDesc = listOf(
+            R.id.day1_desc,
+            R.id.day2_desc,
+            R.id.day3_desc,
+            R.id.day4_desc,
+            R.id.day5_desc
+        )
+
+        val dayOfWeekTextViews = listOf(
+            R.id.day1_date,
+            R.id.day2_date,
+            R.id.day3_date,
+            R.id.day4_date,
+            R.id.day5_date
+        )
+
+        forecastList.take(5).forEachIndexed { index, forecastItem ->
+            val weatherCode = forecastItem.weather?.get(0)?.id ?: return
+            val imageViewId = weatherImages[index]
+            val contentDescId = contentDesc[index]
+            val imageView = findViewById<ImageView>(imageViewId)
+            val descTextView = findViewById<TextView>(contentDescId)
+            updateWeatherImage(imageView, weatherCode, descTextView)
+        }
+    }
+
+    private fun updateWeatherImage(imageView: ImageView, weatherCode: Int, descTextView: TextView) {
+        Log.d("weatherCode","weatherCode is $weatherCode")
+        when (weatherCode) {
+            in 200..232 -> {
+                imageView.setImageResource(R.drawable.storm_status)
+                descTextView.text = "Storm"
+            }
+            in 300..321 ->{
+                imageView.setImageResource(R.drawable.drizzle)
+                descTextView.text = "Drizzle"
+            }
+            in 500..531 ->
+            {
+                imageView.setImageResource(R.drawable.rainy_status_2)
+                descTextView.text = "Rainy"
+            }
+
+            in 600..622 ->
+            {
+                imageView.setImageResource(R.drawable.snow_status)
+                descTextView.text = "Snow"
+            }
+            in 701..781 ->
+            {
+                imageView.setImageResource(R.drawable.fog_mist_status)
+                descTextView.text = "Fog"
+            }
+            800 -> {
+
+                    imageView.setImageResource(R.drawable.clear_image)
+                    descTextView.text = "Clear"
+
+            }
+            in 801..804 ->
+            {
+                imageView.setImageResource(R.drawable.cloud_image)
+                descTextView.text = "cloudy"
+            }
+            else -> {
+                imageView.setImageResource(R.drawable.clear_image)
+            }
+        }
+    }
+
+
 
 }
