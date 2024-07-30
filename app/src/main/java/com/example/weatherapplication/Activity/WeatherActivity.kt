@@ -14,6 +14,8 @@ import com.example.weatherapplication.databinding.ActivityWeatherBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Calendar
+
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -118,45 +120,60 @@ class WeatherActivity : AppCompatActivity() {
 
         // Update GIFs or images based on weather conditions
         data.weather?.get(0)?.let {
-            it.description?.let { it1 -> it.main?.let { it2 -> updateWeatherGif(it2, it1) } }
+            val weatherCode = it.id
+            val weatherDescription = it.description
+            Log.d("code","showing code  $weatherCode $weatherDescription")
+            if (weatherCode != null) {
+                if (weatherDescription != null) {
+                    updateWeatherGif(weatherCode, weatherDescription)
+                }
+            }
         }
     }
 
-    private fun updateWeatherGif(weatherMain: String, weatherDescription: String) {
-        when (weatherMain) {
-            "Thunderstorm" -> {
+    private fun updateWeatherGif(weatherCode: Int, weatherDescription: String) {
+        Log.d("WeatherUpdate", "Weather Code: $weatherCode, Description: $weatherDescription")
+        when (weatherCode) {
+            in 200..232 -> { // Thunderstorm
                 binding.climateGif.setImageResource(R.drawable.storm_status)
-                binding.root.setBackgroundResource(R.drawable.rainy_bg)
+                binding.backgroundImageView.setImageResource(R.drawable.storm_bg)
             }
-            "Drizzle" -> {
+            in 300..321 -> { // Drizzle
                 binding.climateGif.setImageResource(R.drawable.drizzle_status)
-                binding.root.setBackgroundResource(R.drawable.drizzle_bg)
+                binding.backgroundImageView.setImageResource(R.drawable.drizzle_bg)
             }
-            "Rain" -> {
+            in 500..531 -> { // Rain
                 binding.climateGif.setImageResource(R.drawable.rainy_status_2)
-                binding.root.setBackgroundResource(R.drawable.rainy_bg)
+                binding.backgroundImageView.setImageResource(R.drawable.rainy_bg)
             }
-            "Snow" -> {
+            in 600..622 -> { // Snow
                 binding.climateGif.setImageResource(R.drawable.snow_status)
-                binding.root.setBackgroundResource(R.drawable.snow_bg)
+                binding.backgroundImageView.setImageResource(R.drawable.snow_bg)
             }
-            "Clear" -> {
-                binding.climateGif.setImageResource(R.drawable.clear_status)
-                binding.root.setBackgroundResource(R.drawable.sunny_bg)
+            in 701..781 -> { // Atmosphere
+                binding.climateGif.setImageResource(R.drawable.fog_mist_status)
+                binding.backgroundImageView.setImageResource(R.drawable.fog_bg)
             }
-            "Clouds" -> {
-                binding.climateGif.setImageResource(R.drawable.rainy_status_2)
-                binding.root.setBackgroundResource(R.drawable.rainy_bg)
+            800 -> { // Clear
+                val calendar = Calendar.getInstance()
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                if (hour in 6..18) { // Morning (6 AM to 6 PM)
+                    binding.climateGif.setImageResource(R.drawable.clear_status)
+                    binding.backgroundImageView.setImageResource(R.drawable.mrng_clear_bg)
+                } else { // Night
+                    binding.climateGif.setImageResource(R.drawable.clear_status)
+                    binding.backgroundImageView.setImageResource(R.drawable.night_clear_bg)
+                }
             }
-            "Atmosphere" -> {
-               binding.climateGif.setImageResource(R.drawable.fog_mist_status)
-                binding.root.setBackgroundResource(R.drawable.rainy_bg)
-
+            in 801..804 -> { // Clouds
+                binding.climateGif.setImageResource(R.drawable.cloudy_status)
+                binding.backgroundImageView.setImageResource(R.drawable.cloudy_bg)
             }
             else -> {
                 binding.climateGif.setImageResource(R.drawable.clear_status)
-                binding.root.setBackgroundResource(R.drawable.default_bg)
+                binding.backgroundImageView.setImageResource(R.drawable.night_clear_bg)
             }
         }
     }
+
 }
