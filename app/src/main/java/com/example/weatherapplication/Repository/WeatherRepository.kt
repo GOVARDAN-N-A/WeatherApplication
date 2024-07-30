@@ -20,7 +20,4 @@ class WeatherRepository(private val api: ApiService) {
     fun get5DayForecast(lat: Double, lon: Double, unit: String): Call<ForecastResponseApi> {
         return api.get5DayForecast(lat, lon, unit, apiKey)
     }
-
-
-
 }

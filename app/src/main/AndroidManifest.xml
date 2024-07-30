@@ -21,9 +21,10 @@
 
         <activity android:name=".Activity.MainActivity" android:exported="true" />
         <activity android:name="com.example.weather.LoginActivity" android:exported="true" />
-        <activity android:name="com.example.weather.SignupActivity" android:exported="true" />
+        <activity android:name="com.example.navbar_fragment.SignupActivity" android:exported="true" />
+        <activity android:name=".Activity.WeatherActivity" android:exported="true" />
         <activity
-            android:name=".Activity.WeatherActivity"
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
