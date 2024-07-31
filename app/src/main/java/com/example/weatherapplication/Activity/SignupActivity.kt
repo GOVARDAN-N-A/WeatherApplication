@@ -106,6 +106,7 @@ class SignupActivity : AppCompatActivity() {
                     putString("password", password)
                     putString("email", email)
                     putBoolean("isLoggedIn", true) // Set login session flag
+                    putString("city", city) // Set login session flag
                     apply()
                 }
 

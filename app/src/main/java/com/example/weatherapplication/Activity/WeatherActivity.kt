@@ -1,13 +1,22 @@
 package com.example.weatherapplication.Activity
 
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.SearchView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import com.example.weather.LoginActivity
 import com.example.weatherapplication.Model.CurrentResponseApi
 import com.example.weatherapplication.Model.ForecastResponseApi
 import com.example.weatherapplication.Model.GeocodeResponse
@@ -20,6 +29,16 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
+import java.util.Locale
+
+import android.annotation.SuppressLint
+
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationListener
 
 
 class WeatherActivity : AppCompatActivity() {
@@ -27,18 +46,49 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var binding: ActivityWeatherBinding
     private val weatherViewModel: WeatherViewModel by viewModels()
     private val apiKey = "4b03a2bc72bbb54c777ad25fd395a272"
-    var city = "Trichy"
+    private lateinit var city: String
+    private lateinit var currLocation : String
+    private lateinit var locationManager: LocationManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWeatherBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+        val logoutButton = findViewById<Button>(R.id.logout_button)
+        val locationButton = findViewById<ImageButton>(R.id.location_icon)
+        val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
+
+        logoutButton.setOnClickListener {
+            with(sharedPreferences.edit()) {
+                putBoolean("isLoggedIn", false)
+                apply()
+            }
+
+
+
+
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
+
+        val userCity = sharedPreferences.getString("city", null)
+        city = userCity ?: "chennai"
+        Log.d("city", "user city $city")
+
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query != null) {
                     city = query
-                    fetchCoordinates(city) // Call fetchCoordinates when the query is submitted
+                    fetchCoordinates(city)
                 }
                 return true
             }
@@ -71,7 +121,7 @@ class WeatherActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<List<GeocodeResponse>>, t: Throwable) {
                 Log.e("WeatherActivity", "Failure: ${t.message}")
-                t.printStackTrace() // Print the full stack trace
+                t.printStackTrace()
                 Toast.makeText(this@WeatherActivity, t.toString(), Toast.LENGTH_SHORT).show()
             }
         })
@@ -102,8 +152,8 @@ class WeatherActivity : AppCompatActivity() {
 
     private fun formatTime(timestamp: Int?): String {
         return if (timestamp != null) {
-            val sdf = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
-            val date = java.util.Date(timestamp * 1000L)
+            val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val date = Date(timestamp * 1000L)
             sdf.format(date)
         } else {
             "N/A"
@@ -114,8 +164,8 @@ class WeatherActivity : AppCompatActivity() {
         binding.tvLocation.text = city
         binding.temperatureText.text = "${data.main?.temp?.roundToInt()}° C"
         binding.realFeelText.text = "Real Feel: ${data.main?.feelsLike}° C"
-        binding.minTemperatureText.text = "${data.main?.tempMin}° C"
-        binding.maxTemperatureText.text = "${data.main?.tempMax}° C"
+        binding.minTemperatureText.text = "${data.main?.tempMin?.roundToInt()}° C"
+        binding.maxTemperatureText.text = "${data.main?.tempMax?.roundToInt()}° C"
         binding.latValue.text = data.coord?.lat.toString()
         binding.lonValue.text = data.coord?.lon.toString()
         binding.humidityValue.text = "${data.main?.humidity}%"
@@ -124,17 +174,16 @@ class WeatherActivity : AppCompatActivity() {
         binding.sunriseTime.text = formatTime(data.sys?.sunrise)
         binding.sunsetTime.text = formatTime(data.sys?.sunset)
 
-        data.wind?.deg?.let{
+        data.wind?.deg?.let {
             val windDirection = data.wind.deg
             Log.d("Wind Direction", "Wd $windDirection")
             updateWindDirection(windDirection)
         }
 
-        // Update GIFs or images based on weather conditions
         data.weather?.get(0)?.let {
             val weatherCode = it.id
             val weatherDescription = it.description
-            Log.d("code","showing code  $weatherCode $weatherDescription")
+            Log.d("code", "showing code  $weatherCode $weatherDescription")
             if (weatherCode != null) {
                 if (weatherDescription != null) {
                     updateWeatherGif(weatherCode, weatherDescription)
@@ -144,7 +193,6 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     private fun updateWindDirection(windDirection: Int) {
-
         when (windDirection) {
             in 0..22 -> binding.windDirectionImage.setImageResource(R.drawable.north)
             in 23..67 -> binding.windDirectionImage.setImageResource(R.drawable.north_east)
@@ -153,53 +201,53 @@ class WeatherActivity : AppCompatActivity() {
             in 158..202 -> binding.windDirectionImage.setImageResource(R.drawable.south)
             in 203..247 -> binding.windDirectionImage.setImageResource(R.drawable.south_west)
             in 248..292 -> binding.windDirectionImage.setImageResource(R.drawable.west)
-            in 293..337 ->binding.windDirectionImage.setImageResource(R.drawable.north_west)
+            in 293..337 -> binding.windDirectionImage.setImageResource(R.drawable.north_west)
             else -> binding.windDirectionImage.setImageResource(R.drawable.south_east)
         }
-
     }
 
     private fun updateWeatherGif(weatherCode: Int, weatherDescription: String) {
         Log.d("WeatherUpdate", "Weather Code: $weatherCode, Description: $weatherDescription")
+        binding.statusText.text = weatherDescription
         when (weatherCode) {
             in 200..232 -> { // Thunderstorm
-                binding.climateGif.setImageResource(R.drawable.storm_status)
+                binding.climateGif.setImageResource(R.drawable.storm_image)
                 binding.backgroundImageView.setImageResource(R.drawable.storm_bg)
             }
             in 300..321 -> { // Drizzle
-                binding.climateGif.setImageResource(R.drawable.drizzle_status)
+                binding.climateGif.setImageResource(R.drawable.drizzle_image)
                 binding.backgroundImageView.setImageResource(R.drawable.drizzle_bg)
             }
             in 500..531 -> { // Rain
-                binding.climateGif.setImageResource(R.drawable.rainy_status_2)
+                binding.climateGif.setImageResource(R.drawable.rainy_image)
                 binding.backgroundImageView.setImageResource(R.drawable.rainy_bg)
             }
             in 600..622 -> { // Snow
-                binding.climateGif.setImageResource(R.drawable.snow_status)
+                binding.climateGif.setImageResource(R.drawable.snow_image)
                 binding.backgroundImageView.setImageResource(R.drawable.snow_bg)
             }
             in 701..781 -> { // Atmosphere
-                binding.climateGif.setImageResource(R.drawable.fog_mist_status)
+                binding.climateGif.setImageResource(R.drawable.foggy_image)
                 binding.backgroundImageView.setImageResource(R.drawable.fog_bg)
             }
             800 -> { // Clear
                 val calendar = Calendar.getInstance()
                 val hour = calendar.get(Calendar.HOUR_OF_DAY)
                 if (hour in 6..18) { // Morning (6 AM to 6 PM)
-                    binding.climateGif.setImageResource(R.drawable.clear_status)
+                    binding.climateGif.setImageResource(R.drawable.clear_image)
                     binding.backgroundImageView.setImageResource(R.drawable.mrng_clear_bg)
                 } else { // Night
-                    binding.climateGif.setImageResource(R.drawable.clear_status)
+                    binding.climateGif.setImageResource(R.drawable.clear_image)
                     binding.backgroundImageView.setImageResource(R.drawable.night_clear_bg)
                 }
             }
             in 801..804 -> { // Clouds
-                binding.climateGif.setImageResource(R.drawable.cloud_image)
+                binding.climateGif.setImageResource(R.drawable.cloudy_image)
                 binding.backgroundImageView.setImageResource(R.drawable.cloudy_bg)
             }
             else -> {
-                binding.climateGif.setImageResource(R.drawable.clear_status)
-                binding.backgroundImageView.setImageResource(R.drawable.night_clear_bg)
+                binding.climateGif.setImageResource(R.drawable.clear_image)
+                binding.backgroundImageView.setImageResource(R.drawable.mrng_clear_bg)
             }
         }
     }
@@ -209,7 +257,20 @@ class WeatherActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ForecastResponseApi>, response: Response<ForecastResponseApi>) {
                 if (response.isSuccessful) {
                     val forecastList = response.body()?.list ?: return
-                    updateForecastUI(forecastList)
+
+                    // Process the forecast list
+                    val processedForecastList = forecastList.map { forecastItem ->
+                        // Extract and round temperature if it's not null
+                        val roundedTemp = forecastItem.main?.temp?.let { temp ->
+                            String.format("%.0f", temp) // Rounds temperature to 1 decimal place
+                        }
+
+                        // Create a new ForecastItem with rounded temperature
+                        forecastItem.copy(main = forecastItem.main?.copy(temp = roundedTemp?.toDouble()))
+                    }
+
+                    // Update the UI with the processed forecast list
+                    updateForecastUI(processedForecastList)
                 } else {
                     Toast.makeText(this@WeatherActivity, "Failed to get forecast data", Toast.LENGTH_SHORT).show()
                 }
@@ -220,6 +281,7 @@ class WeatherActivity : AppCompatActivity() {
             }
         })
     }
+
 
     private fun updateForecastUI(forecastList: List<ForecastResponseApi.ForecastItem>) {
         val weatherImages = listOf(
@@ -246,6 +308,14 @@ class WeatherActivity : AppCompatActivity() {
             R.id.day5_date
         )
 
+        val tempTextViews = listOf(
+            R.id.day1_temp,
+            R.id.day2_temp,
+            R.id.day3_temp,
+            R.id.day4_temp,
+            R.id.day5_temp
+        )
+
         val sdf = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
 
         // Get the current date
@@ -261,7 +331,6 @@ class WeatherActivity : AppCompatActivity() {
             val date = it.dt?.let { dt -> Date(dt * 1000L) } ?: Date()
             SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date)
         }
-
 
         // Iterate through the next 5 days and update the UI
         for (index in 0 until 5) {
@@ -279,60 +348,72 @@ class WeatherActivity : AppCompatActivity() {
             val forecastItems = forecastsByDate[dateString] ?: emptyList()
             if (forecastItems.isNotEmpty()) {
                 val weatherCode = forecastItems[0].weather?.get(0)?.id ?: 0
+                val temp = forecastItems[0].main?.temp?.let { String.format("%.1f", it) } ?: "N/A"
+                val forecastDesc = forecastItems[0].weather?.get(0)?.description ?:0
+
                 val imageViewId = weatherImages[index]
                 val contentDescId = contentDesc[index]
                 val dateTextViewId = dayOfWeekTextViews[index]
+                val tempTextViewId = tempTextViews[index]
 
                 val imageView = findViewById<ImageView>(imageViewId)
                 val descTextView = findViewById<TextView>(contentDescId)
                 val dateTextView = findViewById<TextView>(dateTextViewId)
+                val tempTextView = findViewById<TextView>(tempTextViewId)
 
-                updateWeatherImage(imageView, weatherCode, descTextView)
+                updateWeatherImage(imageView, weatherCode, descTextView, forecastDesc.toString())
                 dateTextView.text = formattedDate
+                tempTextView.text = "$temp°C"
             } else {
                 // Handle case where there is no forecast data for the day
                 val dateTextViewId = dayOfWeekTextViews[index]
+                val tempTextViewId = tempTextViews[index]
+
                 val dateTextView = findViewById<TextView>(dateTextViewId)
+                val tempTextView = findViewById<TextView>(tempTextViewId)
+
                 dateTextView.text = "N/A"
+                tempTextView.text = "N/A"
             }
         }
     }
 
 
 
-    private fun updateWeatherImage(imageView: ImageView, weatherCode: Int, descTextView: TextView) {
+    private fun updateWeatherImage(imageView: ImageView, weatherCode: Int, descTextView: TextView, forecastDesc: String ) {
+        descTextView.text = forecastDesc
         when (weatherCode) {
             in 200..232 -> { // Thunderstorm
-                imageView.setImageResource(R.drawable.storm_status)
-                descTextView.text = "Thunderstorm"
+                imageView.setImageResource(R.drawable.storm_image)
+//                descTextView.text = "Thunderstorm"
             }
             in 300..321 -> { // Drizzle
-                imageView.setImageResource(R.drawable.drizzle_status)
-                descTextView.text = "Drizzle"
+                imageView.setImageResource(R.drawable.drizzle_image)
+//                descTextView.text = "Drizzle"
             }
             in 500..531 -> { // Rain
-                imageView.setImageResource(R.drawable.rainy_status_2)
-                descTextView.text = "Rain"
+                imageView.setImageResource(R.drawable.rainy_image)
+//                descTextView.text = "Rain"
             }
             in 600..622 -> { // Snow
-                imageView.setImageResource(R.drawable.snow_status)
-                descTextView.text = "Snow"
+                imageView.setImageResource(R.drawable.snow_image)
+//                descTextView.text = "Snow"
             }
             in 701..781 -> { // Atmosphere
-                imageView.setImageResource(R.drawable.fog_mist_status)
-                descTextView.text = "Fog"
+                imageView.setImageResource(R.drawable.foggy_image)
+//                descTextView.text = "Fog"
             }
             800 -> { // Clear
-                imageView.setImageResource(R.drawable.clear_status)
-                descTextView.text = "Clear"
+                imageView.setImageResource(R.drawable.clear_image)
+//                descTextView.text = "Clear"
             }
             in 801..804 -> { // Clouds
-                imageView.setImageResource(R.drawable.cloud_image)
-                descTextView.text = "Clouds"
+                imageView.setImageResource(R.drawable.cloudy_image)
+//                descTextView.text = "Clouds"
             }
             else -> {
-                imageView.setImageResource(R.drawable.clear_status)
-                descTextView.text = "Clear"
+                imageView.setImageResource(R.drawable.cloudy_image)
+//                descTextView.text = "Clear"
             }
         }
     }

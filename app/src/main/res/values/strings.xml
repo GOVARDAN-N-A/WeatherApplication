@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Weather Application</string>
+    <string name="app_name">Sun Or Rain</string>
     <string name="sb_hint">Search City</string>
     <string name="tv_location">Tiruchirappalli</string>
     <string name="weather_day1_desc">Clear</string>
