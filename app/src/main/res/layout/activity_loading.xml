@@ -1,0 +1,16 @@
+<!-- res/layout/loading_layout.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:layout_height="match_parent">
+
+    <!-- GIF Loading Layout -->
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/loading_gif"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerInside"
+        android:src="@drawable/loading"
+        />
+
+</RelativeLayout>

@@ -13,6 +13,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
 class LoginActivity : AppCompatActivity() {
+
     private lateinit var emailEditText: TextInputEditText
     private lateinit var passwordEditText: TextInputEditText
     private lateinit var loginButton: Button
@@ -21,95 +22,117 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var emailLayout: TextInputLayout
     private lateinit var passwordLayout: TextInputLayout
 
+    private val sharedPreferences by lazy {
+        getSharedPreferences("User", Context.MODE_PRIVATE)
+    }
+
+    private val editor by lazy {
+        sharedPreferences.edit()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // Initialize views
+        initializeViews()
+        checkIfLoggedIn()
+        setupListeners()
+        displaySavedEmail()
+    }
+
+    private fun initializeViews() {
         emailEditText = findViewById(R.id.email_edit_text)
         passwordEditText = findViewById(R.id.password_edit_text)
         loginButton = findViewById(R.id.login_button)
         forgotPasswordButton = findViewById(R.id.forgot_password)
         signupButton = findViewById(R.id.signup_button)
 
-        // Initialize TextInputLayout
         emailLayout = findViewById(R.id.email_layout)
         passwordLayout = findViewById(R.id.password_layout)
+    }
 
-        // Initialize SharedPreferences
-        val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-
-        // Check if the user is already logged in
+    private fun checkIfLoggedIn() {
         val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
         if (isLoggedIn) {
-            val intent = Intent(this, WeatherActivity::class.java)
-            startActivity(intent)
-            finish()
+            navigateToWeatherActivity()
         }
+    }
 
-        // Set click listener for login button
-        loginButton.setOnClickListener {
-            val email = emailEditText.text.toString().trim()
-            val password = passwordEditText.text.toString().trim()
+    private fun setupListeners() {
+        loginButton.setOnClickListener { handleLogin() }
 
-            // Reset errors
-            emailLayout.error = null
-            passwordLayout.error = null
+        // Uncomment and implement forgot password functionality if needed
+        // forgotPasswordButton.setOnClickListener {
+        //     startActivity(Intent(this, ForgotActivity::class.java))
+        // }
 
-            // Validate email and password
-            var isValid = true
-            if (email.isEmpty()) {
-                emailLayout.error = "Email cannot be empty"
-                isValid = false
-            } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                emailLayout.error = "Enter a valid email"
-                isValid = false
-            }
-            if (password.isEmpty()) {
-                passwordLayout.error = "Password cannot be empty"
-                isValid = false
-            }
-
-            if (isValid) {
-                // Retrieve stored email and password from SharedPreferences
-                val storedEmail = sharedPreferences.getString("email", null)
-                val storedPassword = sharedPreferences.getString("password", null)
-
-                // Check if the entered email matches the stored email
-                if (email == storedEmail) {
-                    // Check if the password matches the stored password
-                    if (password == storedPassword) {
-                        // Save login state
-                        editor.putBoolean("isLoggedIn", true)
-                        editor.apply()
-
-                        // Proceed with login
-                        val intent = Intent(this, WeatherActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        passwordLayout.error = "Incorrect password"
-                    }
-                } else {
-                    emailLayout.error = "Email does not match"
-                }
-            }
-        }
-
-        // Set click listener for forgot password button
-//        forgotPasswordButton.setOnClickListener {
-//            val intent = Intent(this, ForgotActivity::class.java)
-//            startActivity(intent)
-//        }
-
-        // Set click listener for signup button
         signupButton.setOnClickListener {
-            val intent = Intent(this, SignupActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, SignupActivity::class.java))
+        }
+    }
+
+    private fun handleLogin() {
+        val email = emailEditText.text.toString().trim()
+        val password = passwordEditText.text.toString().trim()
+
+        resetErrors()
+
+        if (validateInputs(email, password)) {
+            if (authenticateUser(email, password)) {
+                editor.putBoolean("isLoggedIn", true)
+                editor.apply()
+                navigateToWeatherActivity()
+            }
+        }
+    }
+
+    private fun validateInputs(email: String, password: String): Boolean {
+        var isValid = true
+
+        if (email.isEmpty()) {
+            emailLayout.error = "Email cannot be empty"
+            isValid = false
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailLayout.error = "Enter a valid email"
+            isValid = false
         }
 
-        // Optionally, retrieve and display stored email (not password) for convenience
+        if (password.isEmpty()) {
+            passwordLayout.error = "Password cannot be empty"
+            isValid = false
+        }
+
+        return isValid
+    }
+
+    private fun authenticateUser(email: String, password: String): Boolean {
+        val storedEmail = sharedPreferences.getString("email", null)
+        val storedPassword = sharedPreferences.getString("password", null)
+
+        return when {
+            email != storedEmail -> {
+                emailLayout.error = "Email does not match"
+                false
+            }
+            password != storedPassword -> {
+                passwordLayout.error = "Incorrect password"
+                false
+            }
+            else -> true
+        }
+    }
+
+    private fun resetErrors() {
+        emailLayout.error = null
+        passwordLayout.error = null
+    }
+
+    private fun navigateToWeatherActivity() {
+        startActivity(Intent(this, WeatherActivity::class.java))
+        finish()
+    }
+
+    private fun displaySavedEmail() {
         val savedEmail = sharedPreferences.getString("email", "")
         emailEditText.setText(savedEmail)
     }

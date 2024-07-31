@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:id="@+id/weatherScrollView"
     android:layout_height="match_parent">
+
 
     <ImageView
         android:id="@+id/backgroundImageView"
@@ -716,4 +719,50 @@
 
         </LinearLayout>
     </ScrollView>
+    <RelativeLayout
+        android:id="@+id/loading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:visibility="gone"
+        android:gravity="center">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/loading"
+            android:indeterminate="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/city_not_found_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:visibility="gone"
+        android:gravity="center">
+
+        <pl.droidsonroids.gif.GifImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/not_found"
+            android:layout_centerInParent="true"
+            android:id="@+id/not_found_gif"
+            android:indeterminate="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/not_found_gif"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/kurale"
+            android:gravity="center"
+            android:text="City Not Found"
+            android:textColor="@color/black"
+            android:textSize="35sp" />
+
+    </RelativeLayout>
+
 </FrameLayout>

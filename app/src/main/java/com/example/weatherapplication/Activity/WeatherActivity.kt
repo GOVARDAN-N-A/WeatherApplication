@@ -34,11 +34,17 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import java.util.Locale
 
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
+import android.os.Handler
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.ViewSwitcher
+import androidx.appcompat.app.AlertDialog
 
 
 class WeatherActivity : AppCompatActivity() {
@@ -47,8 +53,7 @@ class WeatherActivity : AppCompatActivity() {
     private val weatherViewModel: WeatherViewModel by viewModels()
     private val apiKey = "4b03a2bc72bbb54c777ad25fd395a272"
     private lateinit var city: String
-    private lateinit var currLocation : String
-    private lateinit var locationManager: LocationManager
+    private lateinit var viewSwitcher: ViewSwitcher
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,21 +69,27 @@ class WeatherActivity : AppCompatActivity() {
         val logoutButton = findViewById<Button>(R.id.logout_button)
         val locationButton = findViewById<ImageButton>(R.id.location_icon)
         val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
+        binding.loadingLayout.visibility = View.VISIBLE
+        binding.weatherScrollView.visibility = View.GONE
+        Handler().postDelayed({
+            // Hide the ProgressBar
+            showLoading(false)
+
+            // Continue with the rest of your initialization code
+        }, 10)
 
         logoutButton.setOnClickListener {
-            with(sharedPreferences.edit()) {
-                putBoolean("isLoggedIn", false)
-                apply()
+            showLogoutConfirmationDialog(sharedPreferences)
             }
 
 
 
 
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-        }
+//            val intent = Intent(this, LoginActivity::class.java)
+//            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//            startActivity(intent)
+//            finish()
+
 
         val userCity = sharedPreferences.getString("city", null)
         city = userCity ?: "chennai"
@@ -89,6 +100,10 @@ class WeatherActivity : AppCompatActivity() {
                 if (query != null) {
                     city = query
                     fetchCoordinates(city)
+                    binding.searchView.setQuery("", false) // Clear the search bar text
+                    binding.searchView.clearFocus()
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(binding.searchView.windowToken, 0)
                 }
                 return true
             }
@@ -100,31 +115,85 @@ class WeatherActivity : AppCompatActivity() {
 
         fetchCoordinates(city)
     }
+    fun showLoading(isLoading: Boolean){
+        binding.loadingLayout.visibility = View.GONE
+        binding.weatherScrollView.visibility = View.VISIBLE
+    }
+    private fun showLogoutConfirmationDialog(sharedPreferences: SharedPreferences) {
+        AlertDialog.Builder(this)
+            .setTitle("Logout")
+            .setMessage("Are you sure you want to logout?")
+            .setPositiveButton("Yes") { _, _ ->
+                with(sharedPreferences.edit()) {
+                    putBoolean("isLoggedIn", false)
+                    apply()
+                }
+                val intent = Intent(this, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
 
     private fun fetchCoordinates(city: String) {
+
+
+        binding.loadingLayout.visibility = View.VISIBLE
         weatherViewModel.getCoordinates(city, 1, apiKey).enqueue(object : Callback<List<GeocodeResponse>> {
             override fun onResponse(call: Call<List<GeocodeResponse>>, response: Response<List<GeocodeResponse>>) {
+//                if (response.isSuccessful) {
+//                    binding.loadingLayout.visibility = View.GONE
+//                    val geocodeResponse = response.body()?.firstOrNull()
+//                    if (geocodeResponse != null) {
+//                        val lat = geocodeResponse.lat ?: 0.0
+//                        val lon = geocodeResponse.lon ?: 0.0
+//                        fetchWeather(lat, lon)
+//                        fetch5DayForecast(lat, lon)
+//                    } else {
+//                        showCityNotFoundError()
+//                    }
+//                } else {
+//                    showCityNotFoundError()
+//                }
+//            }
                 if (response.isSuccessful) {
+                    binding.loadingLayout.visibility = View.GONE
                     val geocodeResponse = response.body()?.firstOrNull()
                     geocodeResponse?.let {
                         val lat = it.lat ?: 0.0
                         val lon = it.lon ?: 0.0
                         fetchWeather(lat, lon)
                         fetch5DayForecast(lat, lon)
+
+
                     }
                 } else {
                     val errorMessage = response.errorBody()?.string()
                     Log.e("WeatherActivity", "Failed to fetch coordinates: ${response.code()} - $errorMessage")
                     Toast.makeText(this@WeatherActivity, "Failed to get coordinates", Toast.LENGTH_SHORT).show()
+                    showCityNotFoundError()
                 }
             }
+
+
 
             override fun onFailure(call: Call<List<GeocodeResponse>>, t: Throwable) {
                 Log.e("WeatherActivity", "Failure: ${t.message}")
                 t.printStackTrace()
                 Toast.makeText(this@WeatherActivity, t.toString(), Toast.LENGTH_SHORT).show()
+                showCityNotFoundError()
             }
         })
+    }
+
+    private fun showCityNotFoundError() {
+        binding.weatherScrollView.visibility = View.GONE
+        binding.loadingLayout.visibility = View.GONE
+        binding.cityNotFoundLayout.visibility = View.VISIBLE
     }
 
     private fun fetchWeather(lat: Double, lon: Double) {

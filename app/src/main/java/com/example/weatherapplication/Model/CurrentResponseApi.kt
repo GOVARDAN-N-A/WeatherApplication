@@ -100,4 +100,5 @@ data class CurrentResponseApi(
         @SerializedName("speed")
         val speed: Double?
     )
+    
 }
