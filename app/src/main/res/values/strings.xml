@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">weather</string>
+    <string name="signup">Sign up</string>
+    <string name="user_name">username</string>
+    <string name="reg">Register</string>
+    <string name="password">password</string>
+    <string name="go_sign_in">Already a user? signin</string>
+    <string name="confirm_pass">Confirm password</string>
+    <string name="email">e mail</string>
+    <string name="city">City</string>
+    <string name="login">Login</string>
+    <string name="greeting">Welcome Back!</string>
+    <string name="forgot">forgot password?</string>
+    <string name="new_user">New User? Signup</string>
+    <string name="Humidity">Humidity</string>
+    <string name="pressure">Pressure</string>
+    <string name="rain">Chance to rain</string>
+
+
+</resources>

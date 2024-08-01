@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/gradient"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_text"
+        android:text="@string/greeting"
+        android:padding="25dp"
+        android:fontFamily="@font/kotta_one"
+        android:textStyle="bold"
+        android:textSize="36sp"
+        android:textColor="@color/Black"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="323dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/login_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:background="@drawable/round"
+            android:fontFamily="@font/kurale"
+            android:hint="@string/user_name"
+            android:inputType="text"
+            android:padding="20dp"
+            android:textColor="@color/Black"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/login_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/round"
+            android:inputType="text"
+            android:fontFamily="@font/kurale"
+            android:hint="@string/password"
+            android:padding="15dp"
+            android:textColor="@color/Black"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/Forgot_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@color/transperent"
+            android:fontFamily="@font/kurale"
+            android:text="@string/forgot"
+            android:textSize="17sp"
+            android:textColor="@color/Black"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/Login"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:paddingBottom="10dp"
+        android:text="@string/login"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/bg"
+        android:textColor="@color/Black"
+        android:fontFamily="@font/kurale"
+        android:textSize="20sp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/new_user_id"
+        android:layout_gravity="center"
+        android:background="@color/transperent"
+        android:fontFamily="@font/kurale"
+        android:text="@string/new_user"
+        android:textColor="@color/Black"
+        android:textSize="15sp"
+        />
+
+
+</LinearLayout>
+
+
