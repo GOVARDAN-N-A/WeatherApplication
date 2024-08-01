@@ -40,6 +40,8 @@ import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Handler
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -52,11 +54,14 @@ class WeatherActivity : AppCompatActivity() {
     private val weatherViewModel: WeatherViewModel by viewModels()
     private val apiKey = "4b03a2bc72bbb54c777ad25fd395a272"
     private lateinit var city: String
+    p
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWeatherBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -82,11 +87,19 @@ class WeatherActivity : AppCompatActivity() {
 
                 if (query != null) {
                     city = query
-                    fetchCoordinates(city)
-                    binding.searchView.setQuery("", false)
-                    binding.searchView.clearFocus()
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(binding.searchView.windowToken, 0)
+                    if (isNetworkAvailable(this@WeatherActivity)) {
+                        binding.noInternetLayout.visibility = View.GONE
+                        binding.contentLayout.visibility = View.VISIBLE
+                        fetchCoordinates(city)
+                        binding.searchView.setQuery("", false)
+                        binding.searchView.clearFocus()
+                        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.hideSoftInputFromWindow(binding.searchView.windowToken, 0)
+                    } else {
+                        showNoInternetError()
+                    }
+                    city = query
+
                 }
                 return true
             }
@@ -96,7 +109,42 @@ class WeatherActivity : AppCompatActivity() {
             }
         })
 
-        fetchCoordinates(city)
+
+        if (isNetworkAvailable(this)) {
+            binding.noInternetLayout.visibility = View.GONE
+            binding.contentLayout.visibility = View.VISIBLE
+            fetchCoordinates(city)
+        } else {
+            showNoInternetError()
+        }
+
+//        fetchCoordinates(city)
+    }
+
+    private fun showNoInternetError() {
+        Log.d("NoInternet", "No internet connection")
+        binding.backgroundImageView.setImageResource(R.drawable.auth_bg)
+        binding.contentLayout.visibility = View.GONE
+        binding.loadingLayout.visibility = View.GONE
+//        binding.cityNotFoundLayout.visibility = View.VISIBLE
+        binding.noInternetLayout.visibility = View.VISIBLE // Assuming you have this layout
+
+        val retryButton = findViewById<Button>(R.id.tryAgainButton) // Make sure you have a retry button in noInternetLayout
+        retryButton.setOnClickListener {
+            if (isNetworkAvailable(this)) {
+                fetchCoordinates(city)
+                binding.noInternetLayout.visibility = View.GONE
+
+            } else {
+                Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun isNetworkAvailable(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        return networkCapabilities != null && (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR))
     }
 
     private fun showLogoutConfirmationDialog(sharedPreferences: SharedPreferences) {
@@ -129,6 +177,8 @@ class WeatherActivity : AppCompatActivity() {
                 Log.d("res body", "Response body: $responseBody")
 
                 if (response.isSuccessful) {
+                    binding.loadingLayout.visibility = View.GONE
+                    binding.contentLayout.visibility = View.VISIBLE
                     if (responseBody.isNullOrEmpty()) {
                         Log.e("WeatherActivity", "City not found: Empty response body")
                         Toast.makeText(this@WeatherActivity, "City not found", Toast.LENGTH_SHORT).show()
@@ -209,8 +259,8 @@ class WeatherActivity : AppCompatActivity() {
         binding.realFeelText.text = "Real Feel: ${data.main?.feelsLike}° C"
         binding.minTemperatureText.text = "${data.main?.tempMin?.roundToInt()}° C"
         binding.maxTemperatureText.text = "${data.main?.tempMax?.roundToInt()}° C"
-        binding.latValue.text = data.coord?.lat.toString()
-        binding.lonValue.text = data.coord?.lon.toString()
+        binding.latValue.text = String.format("%.2f", data.coord?.lat ?: 0.0)
+        binding.lonValue.text = String.format("%.2f", data.coord?.lon ?: 0.0)
         binding.humidityValue.text = "${data.main?.humidity}%"
         binding.pressureValue.text = "${data.main?.pressure} hPa"
         binding.windSpeedText.text = "${data.wind?.speed} km/h"
@@ -451,7 +501,7 @@ class WeatherActivity : AppCompatActivity() {
 //                descTextView.text = "Clouds"
             }
             else -> {
-                imageView.setImageResource(R.drawable.cloudy_image)
+                imageView.setImageResource(R.drawable.clear_image)
 //                descTextView.text = "Clear"
             }
         }

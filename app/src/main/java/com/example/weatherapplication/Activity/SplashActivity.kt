@@ -1,3 +1,4 @@
+// SplashActivity.kt
 package com.example.weatherapplication
 
 import android.content.Context
@@ -5,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.weather.LoginActivity
 import com.example.weatherapplication.Activity.WeatherActivity
@@ -14,24 +16,26 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
 
-        // Delay for 2 seconds to display the splash screen
+        // Start background service
+        val serviceIntent = Intent(this, BackgroundService::class.java)
+        startService(serviceIntent)
+
         Handler(Looper.getMainLooper()).postDelayed({
-            // Check login status
             val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
             val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
 
-            if (isLoggedIn) {
-                // Navigate to WeatherActivity if logged in
-                val intent = Intent(this, WeatherActivity::class.java)
-                startActivity(intent)
+            val intent = if (isLoggedIn) {
+                Intent(this, WeatherActivity::class.java)
             } else {
-                // Navigate to LoginActivity if not logged in
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
+                Intent(this, LoginActivity::class.java)
             }
-            // Close SplashActivity
+            startActivity(intent)
             finish()
-        }, 2000) // 2000 milliseconds delay
+        }, 3000)
     }
 }

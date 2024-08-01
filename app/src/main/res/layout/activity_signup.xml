@@ -62,6 +62,29 @@
                     app:boxStrokeColor="@color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Email Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/email_layout"
+                style="@style/ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                app:errorTextColor="@color/chilli_pepper"
+                app:hintTextColor="@color/white">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/e_mail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="16dp"
+                    android:fontFamily="@font/kurale"
+                    android:hint="Email"
+                    android:background="@drawable/curved_no_stroke"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:inputType="textEmailAddress"
+                    app:boxStrokeColor="@color/white" />
+            </com.google.android.material.textfield.TextInputLayout>
             <!-- Password Field -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/password_layout"
@@ -112,9 +135,9 @@
                     app:boxStrokeColor="@color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Email Field -->
+            <!-- Date of Birth Field -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/email_layout"
+                android:id="@+id/dob_layout"
                 style="@style/ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -123,16 +146,18 @@
                 app:hintTextColor="@color/white">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/e_mail"
+                    android:id="@+id/dob_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="16dp"
                     android:fontFamily="@font/kurale"
-                    android:hint="Email"
+                    android:hint="Date of Birth"
                     android:background="@drawable/curved_no_stroke"
                     android:textSize="16sp"
                     android:textColor="@color/white"
-                    android:inputType="textEmailAddress"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:clickable="true"
                     app:boxStrokeColor="@color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -159,31 +184,7 @@
                     app:boxStrokeColor="@color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Date of Birth Field -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/dob_layout"
-                style="@style/ThemeOverlay.Material3.AutoCompleteTextView.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                app:errorTextColor="@color/chilli_pepper"
-                app:hintTextColor="@color/white">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/dob_edit_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="16dp"
-                    android:fontFamily="@font/kurale"
-                    android:hint="Date of Birth"
-                    android:background="@drawable/curved_no_stroke"
-                    android:textSize="16sp"
-                    android:textColor="@color/white"
-                    android:inputType="none"
-                    android:focusable="false"
-                    android:clickable="true"
-                    app:boxStrokeColor="@color/white" />
-            </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Register Button -->
             <Button

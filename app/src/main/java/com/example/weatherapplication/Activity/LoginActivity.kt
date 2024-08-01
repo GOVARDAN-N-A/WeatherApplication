@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.navbar_fragment.SignupActivity
+import com.example.weatherapplication.Activity.ForgotActivity
 import com.example.weatherapplication.Activity.WeatherActivity
 import com.example.weatherapplication.R
 import com.google.android.material.textfield.TextInputEditText
@@ -38,7 +40,14 @@ class LoginActivity : AppCompatActivity() {
         checkIfLoggedIn()
         setupListeners()
         displaySavedEmail()
+
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
     }
+
+
 
     private fun initializeViews() {
         emailEditText = findViewById(R.id.email_edit_text)
@@ -61,10 +70,9 @@ class LoginActivity : AppCompatActivity() {
     private fun setupListeners() {
         loginButton.setOnClickListener { handleLogin() }
 
-        // Uncomment and implement forgot password functionality if needed
-        // forgotPasswordButton.setOnClickListener {
-        //     startActivity(Intent(this, ForgotActivity::class.java))
-        // }
+         forgotPasswordButton.setOnClickListener {
+             startActivity(Intent(this, ForgotActivity::class.java))
+         }
 
         signupButton.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
