@@ -43,10 +43,18 @@ import android.location.LocationListener
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ViewSwitcher
 import androidx.appcompat.app.AlertDialog
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -54,37 +62,39 @@ class WeatherActivity : AppCompatActivity() {
     private val weatherViewModel: WeatherViewModel by viewModels()
     private val apiKey = "4b03a2bc72bbb54c777ad25fd395a272"
     private lateinit var city: String
-    p
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private val LOCATION_REQUEST_CODE = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWeatherBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        val logoutButton = binding.logoutButton
+        binding.locationIcon.setOnClickListener {
+            getLocation()
+        }
+
         val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
 
-        logoutButton.setOnClickListener {
+        binding.logoutButton.setOnClickListener {
             showLogoutConfirmationDialog(sharedPreferences)
         }
 
-        val userCity = sharedPreferences.getString("city", "chennai")
-        city = userCity ?: "chennai"
+        city = sharedPreferences.getString("city", "chennai") ?: "chennai"
         Log.d("city", "user city $city")
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
             override fun onQueryTextSubmit(query: String?): Boolean {
                 binding.cityNotFoundLayout.visibility = View.GONE
                 binding.contentLayout.visibility = View.VISIBLE
-
                 if (query != null) {
                     city = query
                     if (isNetworkAvailable(this@WeatherActivity)) {
@@ -98,17 +108,12 @@ class WeatherActivity : AppCompatActivity() {
                     } else {
                         showNoInternetError()
                     }
-                    city = query
-
                 }
                 return true
             }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
+            override fun onQueryTextChange(newText: String?): Boolean = false
         })
-
 
         if (isNetworkAvailable(this)) {
             binding.noInternetLayout.visibility = View.GONE
@@ -117,8 +122,98 @@ class WeatherActivity : AppCompatActivity() {
         } else {
             showNoInternetError()
         }
+    }
+    private fun getLocation() {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
-//        fetchCoordinates(city)
+        if (!isGpsEnabled && !isNetworkEnabled) {
+            showLocationSettingsAlert()
+            return
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                LOCATION_REQUEST_CODE
+            )
+            return
+        }
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        fusedLocationProviderClient.lastLocation
+            .addOnSuccessListener { location ->
+                if (location != null) {
+                    val currLat = location.latitude
+                    val currLon = location.longitude
+                    fetchWeather(currLat, currLon)
+                    Log.d("loc", "loc $currLat, $currLon")
+                } else {
+                    requestNewLocationData()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("LocationError", "Failed to get location", exception)
+                requestNewLocationData()
+            }
+    }
+
+    private fun requestNewLocationData() {
+        locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 0
+            fastestInterval = 0
+            numUpdates = 1
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION),
+                LOCATION_REQUEST_CODE
+            )
+            return
+        }
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest, locationCallback, Looper.myLooper()
+        )
+    }
+
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            val location = locationResult.lastLocation
+            if (location != null) {
+                val currLat = location.latitude
+                val currLon = location.longitude
+                fetchWeather(currLat, currLon)
+                Log.d("loc", "loc $currLat, $currLon")
+            } else {
+                Log.e("LocationError", "Location is null after requesting new data")
+            }
+        }
+    }
+
+    private fun showLocationSettingsAlert() {
+        AlertDialog.Builder(this)
+            .setTitle("Enable Location Services")
+            .setMessage("Location services are required for this app. Please enable them in the settings.")
+            .setPositiveButton("Settings") { _, _ ->
+                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+            .show()
     }
 
     private fun showNoInternetError() {
@@ -221,6 +316,7 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     private fun fetchWeather(lat: Double, lon: Double) {
+        Log.d("fetchWeather", "$lat, $lon")
         weatherViewModel.loadingCurrentWeather(lat, lon, "metric").enqueue(object : Callback<CurrentResponseApi> {
             override fun onResponse(call: Call<CurrentResponseApi>, response: Response<CurrentResponseApi>) {
                 if (response.isSuccessful) {
@@ -254,7 +350,8 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     private fun updateUI(data: CurrentResponseApi) {
-        binding.tvLocation.text = city
+        Log.d("full_data", "data $data")
+        binding.tvLocation.text = data.name
         binding.temperatureText.text = "${data.main?.temp?.roundToInt()}° C"
         binding.realFeelText.text = "Real Feel: ${data.main?.feelsLike}° C"
         binding.minTemperatureText.text = "${data.main?.tempMin?.roundToInt()}° C"

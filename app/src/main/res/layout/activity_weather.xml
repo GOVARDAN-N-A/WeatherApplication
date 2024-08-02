@@ -36,7 +36,7 @@
 
                 <androidx.cardview.widget.CardView
                 android:id="@+id/cardSearch"
-                android:layout_width="300dp"
+                android:layout_width="290dp"
                 android:layout_height="40dp"
                 android:layout_margin="16dp"
                 app:cardElevation="8dp"
@@ -47,7 +47,7 @@
 
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/searchView"
-                    android:layout_width="300dp"
+                    android:layout_width="290dp"
                     android:layout_height="40dp"
                     app:iconifiedByDefault="false"
                     app:queryHint="Search City" />
@@ -61,6 +61,7 @@
                 <ImageButton
                     android:id="@+id/location_icon"
                     android:layout_width="30dp"
+                    android:layout_marginStart="10dp"
                     android:layout_height="30dp"
                     android:src="@drawable/location"
                     android:layout_gravity="center"
