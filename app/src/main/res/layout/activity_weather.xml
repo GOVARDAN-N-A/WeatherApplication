@@ -711,7 +711,34 @@
                 </LinearLayout>
             </RelativeLayout>
 
-            <Button
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/forecastTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next 24 Hours Forecast"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewForecast"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/curved_border"
+            android:padding="8dp"
+            android:orientation="horizontal"/>
+    </LinearLayout>
+
+    <Button
                 android:id="@+id/logout_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -723,7 +750,10 @@
                 android:textSize="25sp"
                 />
         </LinearLayout>
+
+
         </LinearLayout>
+
     </ScrollView>
     <RelativeLayout
         android:id="@+id/loading_layout"

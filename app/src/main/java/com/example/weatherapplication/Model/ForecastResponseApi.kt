@@ -12,7 +12,8 @@ data class ForecastResponseApi(
         @SerializedName("dt_txt") val dtTxt: String?
     ) {
         data class Main(
-            @SerializedName("temp") val temp: Double?
+            @SerializedName("temp") val temp: Double?,
+            @SerializedName("humidity") val humidity : Int
         )
 
         data class Weather(

@@ -1,5 +1,6 @@
 package com.example.weatherapplication.Activity
 
+import ForecastAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,7 +9,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
@@ -29,26 +29,21 @@ import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.checkSelfPermission
 import java.util.Locale
 
-import android.annotation.SuppressLint
 import android.content.SharedPreferences
 
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationListener
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.ViewSwitcher
 import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+//import com.example.weatherapplication.ForecastAdapter
+import com.example.weatherapplication.Model.HourlyForecastResponse
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -65,11 +60,22 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private val LOCATION_REQUEST_CODE = 100
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var forecastAdapter: ForecastAdapter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWeatherBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        recyclerView = findViewById(R.id.recyclerViewForecast)
+        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        forecastAdapter = ForecastAdapter(emptyList())
+        recyclerView.adapter = forecastAdapter
+
+
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -285,7 +291,8 @@ class WeatherActivity : AppCompatActivity() {
                             val lat = geocodeResponse.lat ?: 0.0
                             val lon = geocodeResponse.lon ?: 0.0
                             fetchWeather(lat, lon)
-                            fetch5DayForecast(lat, lon)
+                            fetch5DayForecast(lat, lon, apiKey)
+                            fetchHourlyForecast(lat,lon,apiKey)
                         } else {
                             Log.e("WeatherActivity", "City not found: No valid geocode response")
                             showCityNotFoundError()
@@ -442,8 +449,8 @@ class WeatherActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetch5DayForecast(lat: Double, lon: Double) {
-        weatherViewModel.get5DayForecast(lat, lon, "metric").enqueue(object : Callback<ForecastResponseApi> {
+    private fun fetch5DayForecast(lat: Double, lon: Double, apiKey: String) {
+        weatherViewModel.get5DayForecast(lat, lon, "metric", apiKey).enqueue(object : Callback<ForecastResponseApi> {
             override fun onResponse(call: Call<ForecastResponseApi>, response: Response<ForecastResponseApi>) {
                 if (response.isSuccessful) {
                     val forecastList = response.body()?.list ?: return
@@ -467,6 +474,30 @@ class WeatherActivity : AppCompatActivity() {
             }
         })
     }
+
+    fun fetchHourlyForecast(lat: Double, lon: Double, apiKey: String) {
+        weatherViewModel.getHourlyForecast(lat, lon, "metric", apiKey).enqueue(object : Callback<HourlyForecastResponse> {
+            override fun onResponse(
+                call: Call<HourlyForecastResponse>,
+                response: Response<HourlyForecastResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val hourlyForecastValue = response.body()?.list ?: emptyList()
+                    Log.d("HourlyForecast", "Data: $hourlyForecastValue")
+                    forecastAdapter = ForecastAdapter(hourlyForecastValue)
+                    recyclerView.adapter = forecastAdapter
+                } else {
+                    Log.e("HourlyForecast", "Error: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<HourlyForecastResponse>, t: Throwable) {
+                Log.e("HourlyForecast", "Failure: ${t.message}")
+            }
+        })
+    }
+
+
 
 
     private fun updateForecastUI(forecastList: List<ForecastResponseApi.ForecastItem>) {
