@@ -492,7 +492,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/daily_forecast_title"
                     android:orientation="vertical"
-                    android:layout_marginTop="20dp">
+                    android:layout_marginTop="10dp">
 
                     <!-- Day 1 -->
                     <LinearLayout
@@ -716,13 +716,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@drawable/curved_border"
+        android:layout_marginTop="20dp"
         android:padding="16dp">
 
         <TextView
             android:id="@+id/forecastTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Next 24 Hours Forecast"
+            android:text="Hourly Forecast"
             android:textSize="18sp"
             android:textColor="@color/white"
             android:textStyle="bold"
@@ -732,8 +734,6 @@
             android:id="@+id/recyclerViewForecast"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/curved_border"
             android:padding="8dp"
             android:orientation="horizontal"/>
     </LinearLayout>
@@ -759,14 +759,15 @@
         android:id="@+id/loading_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/auth_bg"
+        android:background="@color/white"
         android:visibility="gone"
+
         android:gravity="center">
 
         <pl.droidsonroids.gif.GifImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/loading_gif"
+            android:src="@drawable/loading_icon"
             android:indeterminate="true" />
 
     </RelativeLayout>
@@ -779,12 +780,12 @@
         android:visibility="gone"
         android:gravity="center">
 
-        <pl.droidsonroids.gif.GifImageView
+        <ImageView
             android:id="@+id/not_found_gif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/not_found"
+            android:src="@drawable/no_search"
             android:indeterminate="true" />
 
         <TextView
@@ -809,12 +810,12 @@
         android:visibility="gone"
         android:gravity="center">
 
-        <pl.droidsonroids.gif.GifImageView
+        <ImageView
             android:id="@+id/no_internet_gif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/not_found"
+            android:src="@drawable/no_signal"
             android:indeterminate="true" />
 
         <TextView

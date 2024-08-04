@@ -14,7 +14,7 @@ import java.util.Locale
 class ForecastAdapter(private val forecastList: List<HourlyForecastItem>) :
     RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
 
-    private val limitedForecastList = forecastList.take(5)
+    private val limitedForecastList = forecastList.take(10)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForecastViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_forecast, parent, false)
@@ -24,7 +24,7 @@ class ForecastAdapter(private val forecastList: List<HourlyForecastItem>) :
     override fun onBindViewHolder(holder: ForecastViewHolder, position: Int) {
         val forecast = limitedForecastList[position]
         holder.timeTextView.text = forecast.dt?.let { formatTime(it) }
-        holder.tempTextView.text = forecast.main?.temp?.toString()
+        holder.tempTextView.text = "${forecast.main?.temp?.toInt().toString()}° C"
         holder.humidityTextView.text = "${forecast.main?.humidity?.toInt() ?: "N/A"}%"
 
         // Get the weather code from the API

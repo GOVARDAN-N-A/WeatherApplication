@@ -224,7 +224,7 @@ class WeatherActivity : AppCompatActivity() {
 
     private fun showNoInternetError() {
         Log.d("NoInternet", "No internet connection")
-        binding.backgroundImageView.setImageResource(R.drawable.auth_bg)
+        binding.backgroundImageView.setImageResource(R.color.black)
         binding.contentLayout.visibility = View.GONE
         binding.loadingLayout.visibility = View.GONE
 //        binding.cityNotFoundLayout.visibility = View.VISIBLE
@@ -316,7 +316,7 @@ class WeatherActivity : AppCompatActivity() {
 
     private fun showCityNotFoundError() {
         Log.d("not_Found", "Called")
-        binding.backgroundImageView.setImageResource(R.drawable.auth_bg)
+        binding.backgroundImageView.setImageResource(R.color.black)
         binding.contentLayout.visibility = View.GONE
         binding.loadingLayout.visibility = View.GONE
         binding.cityNotFoundLayout.visibility = View.VISIBLE
@@ -361,8 +361,8 @@ class WeatherActivity : AppCompatActivity() {
         binding.tvLocation.text = data.name
         binding.temperatureText.text = "${data.main?.temp?.roundToInt()}° C"
         binding.realFeelText.text = "Real Feel: ${data.main?.feelsLike}° C"
-        binding.minTemperatureText.text = "${data.main?.tempMin?.roundToInt()}° C"
-        binding.maxTemperatureText.text = "${data.main?.tempMax?.roundToInt()}° C"
+        binding.minTemperatureText.text = "${data.main?.tempMax?.roundToInt()}° C"
+        binding.maxTemperatureText.text = "${data.main?.tempMin?.roundToInt()}° C"
         binding.latValue.text = String.format("%.2f", data.coord?.lat ?: 0.0)
         binding.lonValue.text = String.format("%.2f", data.coord?.lon ?: 0.0)
         binding.humidityValue.text = "${data.main?.humidity}%"
@@ -440,7 +440,7 @@ class WeatherActivity : AppCompatActivity() {
             }
             in 801..804 -> { // Clouds
                 binding.climateGif.setImageResource(R.drawable.cloudy_image)
-                binding.backgroundImageView.setImageResource(R.drawable.cloudy_bg)
+                binding.backgroundImageView.setImageResource(R.drawable.cloudy_bg2)
             }
             else -> {
                 binding.climateGif.setImageResource(R.drawable.clear_image)
