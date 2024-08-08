@@ -21,7 +21,7 @@ class SplashActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        // Start background service
+
         val serviceIntent = Intent(this, BackgroundService::class.java)
         startService(serviceIntent)
 
