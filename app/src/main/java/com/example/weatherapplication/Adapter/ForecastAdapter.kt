@@ -1,3 +1,4 @@
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ class ForecastAdapter(private val forecastList: List<HourlyForecastItem>) :
         return ForecastViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ForecastViewHolder, position: Int) {
         val forecast = limitedForecastList[position]
         holder.timeTextView.text = forecast.dt?.let { formatTime(it) }

@@ -3,11 +3,12 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
     id("kotlin-parcelize")
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
     namespace = "com.example.weatherapplication"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.weatherapplication"
@@ -52,7 +53,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.android.gif.drawable)
 
-    implementation ("com.google.android.gms:play-services-location:21.0.1")
+    implementation (libs.play.services.location.v2101)
 
 
     // Retrofit
@@ -82,6 +83,8 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.androidx.media3.common)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.swiperefreshlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -1,9 +1,9 @@
 package com.example.weatherapplication.Activity
 
 import ForecastAdapter
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Handler
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
@@ -30,8 +30,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 import java.util.Locale
+import com.google.gson.Gson
 
 import android.content.SharedPreferences
+import android.content.Context
 
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -49,6 +51,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 
 
 class WeatherActivity : AppCompatActivity() {
@@ -62,6 +65,7 @@ class WeatherActivity : AppCompatActivity() {
     private val LOCATION_REQUEST_CODE = 100
     private lateinit var recyclerView: RecyclerView
     private lateinit var forecastAdapter: ForecastAdapter
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +79,7 @@ class WeatherActivity : AppCompatActivity() {
         forecastAdapter = ForecastAdapter(emptyList())
         recyclerView.adapter = forecastAdapter
 
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
 
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -86,6 +91,10 @@ class WeatherActivity : AppCompatActivity() {
 
         binding.locationIcon.setOnClickListener {
             getLocation()
+        }
+
+        swipeRefreshLayout.setOnRefreshListener {
+            refreshWeatherData()
         }
 
         val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
@@ -109,6 +118,8 @@ class WeatherActivity : AppCompatActivity() {
                         fetchCoordinates(city)
                         binding.searchView.setQuery("", false)
                         binding.searchView.clearFocus()
+
+                        // input method manager
                         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         imm.hideSoftInputFromWindow(binding.searchView.windowToken, 0)
                     } else {
@@ -197,6 +208,19 @@ class WeatherActivity : AppCompatActivity() {
         )
     }
 
+
+    private fun getWeatherData(context: Context): CurrentResponseApi? {
+        val sharedPreferences = context.getSharedPreferences("WeatherPrefs", Context.MODE_PRIVATE)
+        val jsonString = sharedPreferences.getString("weather_data", null)
+        return if (jsonString != null) {
+            val gson = Gson()
+            gson.fromJson(jsonString, CurrentResponseApi::class.java) // Convert JSON back to object
+        } else {
+            null
+        }
+    }
+
+
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val location = locationResult.lastLocation
@@ -210,6 +234,16 @@ class WeatherActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun saveWeatherData(context: Context, data: CurrentResponseApi) {
+        val sharedPreferences = context.getSharedPreferences("WeatherPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val jsonString = gson.toJson(data) // Convert object to JSON
+        editor.putString("weather_data", jsonString)
+        editor.apply() // Save JSON to SharedPreferences
+    }
+
 
     private fun showLocationSettingsAlert() {
         AlertDialog.Builder(this)
@@ -235,6 +269,7 @@ class WeatherActivity : AppCompatActivity() {
             if (isNetworkAvailable(this)) {
                 fetchCoordinates(city)
                 binding.noInternetLayout.visibility = View.GONE
+                refreshWeatherData()
 
             } else {
                 Toast.makeText(this, "No internet connection", Toast.LENGTH_SHORT).show()
@@ -320,6 +355,22 @@ class WeatherActivity : AppCompatActivity() {
         binding.contentLayout.visibility = View.GONE
         binding.loadingLayout.visibility = View.GONE
         binding.cityNotFoundLayout.visibility = View.VISIBLE
+
+    }
+
+    private fun refreshWeatherData() {
+        // Simulate network call or data refresh
+        Handler().postDelayed({
+            // Stop the refresh animation
+            val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
+            city = sharedPreferences.getString("city", "chennai") ?: "chennai"
+            swipeRefreshLayout.isRefreshing = false
+            binding.cityNotFoundLayout.visibility = View.GONE;
+            binding.noInternetLayout.visibility = View.GONE;
+            fetchCoordinates(city)
+
+            // Update weather data logic here
+        }, 2000) // Simulate a 2-second refresh time
     }
 
     private fun fetchWeather(lat: Double, lon: Double) {
@@ -357,6 +408,7 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     private fun updateUI(data: CurrentResponseApi) {
+//        saveWeatherData(context, data) // Save data for offline use
         Log.d("full_data", "data $data")
         binding.tvLocation.text = data.name
         binding.temperatureText.text = "${data.main?.temp?.roundToInt()}° C"
@@ -388,6 +440,18 @@ class WeatherActivity : AppCompatActivity() {
             }
         }
     }
+
+//    private fun handleOfflineMode() {
+//        val savedData = getWeatherData(context)
+//        if (savedData != null) {
+//            updateUI(savedData) // Use saved data to update UI
+//        } else {
+//            Log.d("Offline Mode", "No data available in SharedPreferences")
+//            // Show appropriate message or fallback UI
+//        }
+//    }
+
+
 
     private fun updateWindDirection(windDirection: Int) {
         when (windDirection) {

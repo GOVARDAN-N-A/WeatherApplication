@@ -8,10 +8,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.weather.LoginActivity
 import com.example.weatherapplication.R
+import com.example.weather.LoginActivity
 
 class ForgotActivity : AppCompatActivity() {
+    private lateinit var emailEditText: EditText
     private lateinit var newPasswordEditText: EditText
     private lateinit var confirmPasswordEditText: EditText
     private lateinit var saveButton: Button
@@ -26,30 +27,28 @@ class ForgotActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-
+        emailEditText = findViewById(R.id.email_edit_text)
         newPasswordEditText = findViewById(R.id.password_edit_text)
         confirmPasswordEditText = findViewById(R.id.confirm_password_edit_text)
         saveButton = findViewById(R.id.save_button)
         backButton = findViewById(R.id.back_button)
 
-
         saveButton.setOnClickListener {
+            val email = emailEditText.text.toString().trim()
             val newPassword = newPasswordEditText.text.toString().trim()
             val confirmPassword = confirmPasswordEditText.text.toString().trim()
 
-            if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
+            if (email.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_LONG).show()
             } else if (newPassword != confirmPassword) {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_LONG).show()
             } else {
-
                 val sharedPreferences = getSharedPreferences("User", Context.MODE_PRIVATE)
                 with(sharedPreferences.edit()) {
                     putString("password", newPassword)
                     apply()
                 }
                 Toast.makeText(this, "Password updated successfully", Toast.LENGTH_LONG).show()
-
 
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
